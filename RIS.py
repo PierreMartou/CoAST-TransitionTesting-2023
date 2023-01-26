@@ -1,6 +1,6 @@
 import PySimpleGUI as sg
 from features import EmergencyLevel, High, Low, Widget, Map, Instr, InstrColdWeather, InstrFlood
-
+from time import sleep
 
 class RIS:
     # Initializes main components of the RIS system to None.
@@ -29,14 +29,21 @@ class RIS:
         featuresLower = [f.lower() for f in self.features]
         for t in transitions:
             if t[1:].lower() not in featuresLower:
-                print("This transition was not recognized : " + str(t) + ". The transition was aborted.")
+                print("This transition was not recognized: " + str(t) + ". The transition was aborted.")
                 return False
             feature = self.features[featuresLower.index(t[1:].lower())]
+
             if t[0:1] == "+":
                 self.featuresFutureStatus[feature] = True
+                if self.featuresStatus[feature]:
+                    print("This transition cannot be executed, as the feature is already activated: " + str(t))
+                    return False
                 toActivate[feature] = getattr(globals()[feature], 'activate')
             else:
                 self.featuresFutureStatus[feature] = False
+                if not self.featuresStatus[feature]:
+                    print("This transition cannot be executed, as the feature is already deactivated: " + str(t))
+                    return False
                 toDeactivate[feature] = getattr(globals()[feature], 'deactivate')
 
         for i in range(len(self.features)-1, -1, -1):
@@ -52,6 +59,7 @@ class RIS:
 
         if self.featuresStatus['Widget']:
             self.window.update()
+            sleep(0.05)
 
         print("Transition completed : " + str(transitions))
         if not self.emergencyLevelValidity():
@@ -76,11 +84,10 @@ class RIS:
     # Returns True if everything is valid.
     def windowValidity(self):
         if self.featuresStatus['InstrColdWeather'] and 'Cold weather' not in self.widgetBelow.cget("text") and 'Cold weather' not in self.widgetAbove.cget("text"):
-            print("COMES HERE")
             return False
         if self.featuresStatus['InstrFlood'] and 'Flood' not in self.widgetBelow.cget("text") and 'Flood' not in self.widgetAbove.cget("text"):
             return False
-        if "empty space" in self.widgetAbove.cget("text") and "empty space" not in self.widgetAbove.cget("text"):
+        if "empty space" in self.widgetAbove.cget("text") and "empty space" not in self.widgetBelow.cget("text"):
             return False
         return True
 
