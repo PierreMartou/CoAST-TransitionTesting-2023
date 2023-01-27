@@ -1,6 +1,6 @@
-import PySimpleGUI as sg
 from features import EmergencyLevel, High, Low, Widget, Map, Instr, InstrColdWeather, InstrFlood
 from time import sleep
+
 
 class RIS:
     # Initializes main components of the RIS system to None.
@@ -45,7 +45,10 @@ class RIS:
                     print("This transition cannot be executed, as the feature is already deactivated: " + str(t))
                     return False
                 toDeactivate[feature] = getattr(globals()[feature], 'deactivate')
-
+        valid = self.checkTransitionValidity()
+        if not valid:
+            print("Transition aborted, as the final configuration is not valid.")
+            return False
         for i in range(len(self.features)-1, -1, -1):
             func = toDeactivate[self.features[i]]
             if func is not None:
@@ -62,32 +65,48 @@ class RIS:
             sleep(0.05)
 
         print("Transition completed : " + str(transitions))
-        if not self.emergencyLevelValidity():
-            print("!!! Error detected in the current configuration, unexpected emergency level !!!")
-        if not self.windowValidity():
-            print("!!! Error detected in the current configuration, unexpected window layout !!!")
+        self.emergencyLevelValidity()
+        self.windowValidity()
 
     # This verifies the correctness of the current emergency level.
     # Returns True if everything is valid.
     def emergencyLevelValidity(self):
-        if self.featuresStatus['High'] and self.emergencyLevel == 2:
+        if self.featuresStatus['High'] and self.emergencyLevel != 2:
+            print("!!! Error detected, expected emergency level is 2 !!!")
+            return False
+        if self.featuresStatus['Low'] and self.emergencyLevel != 1:
+            print("!!! Error detected, expected emergency level is 1 !!!")
             return True
-        if self.featuresStatus['Low'] and self.emergencyLevel == 1:
-            return True
-        if not self.featuresStatus['High'] and not self.featuresStatus['Low'] and self.emergencyLevel == 0:
-            return True
-        if not self.featuresStatus['EmergencyLevel'] and self.emergencyLevel is None:
-            return True
-        return False
+        if not self.featuresStatus['High'] and not self.featuresStatus['Low'] and self.emergencyLevel != 0:
+            print("!!! Error detected, expected emergency level is 0 !!!")
+            return False
+        if not self.featuresStatus['EmergencyLevel'] and self.emergencyLevel is not None:
+            print("!!! Error detected, expected emergency level is None !!!")
+            return False
+        return True
 
     # This verifies the correctness of the current window displayed.
     # Returns True if everything is valid.
     def windowValidity(self):
         if self.featuresStatus['InstrColdWeather'] and 'Cold weather' not in self.widgetBelow.cget("text") and 'Cold weather' not in self.widgetAbove.cget("text"):
+            print("!!! Error detected, instructions on Cold weather are not displayed !!!")
             return False
         if self.featuresStatus['InstrFlood'] and 'Flood' not in self.widgetBelow.cget("text") and 'Flood' not in self.widgetAbove.cget("text"):
+            print("!!! Error detected, instructions on Flood are not displayed !!!")
             return False
         if "empty space" in self.widgetAbove.cget("text") and "empty space" not in self.widgetBelow.cget("text"):
+            print("!!! Error detected, the widget below should be displayed above to avoid empty space !!!")
             return False
         return True
+
+    def checkTransitionValidity(self):
+        valid = True
+        if not self.featuresFutureStatus['EmergencyLevel']:
+            print("Emergencylevel is not activated in the final configuration !")
+            valid = False
+        if not self.featuresFutureStatus['Widget']:
+            print("Widget is not activated in the final configuration !")
+            valid = False
+        return valid
+
 
