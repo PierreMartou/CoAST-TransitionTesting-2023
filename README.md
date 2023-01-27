@@ -4,7 +4,7 @@ This small prototype of a Risk Information System (RIS) is meant to complement t
 
 Its goal is to illustrate with actual code the RIS prototype described in this paper. It mimicks RIS behaviour through terminal messages and a simple GUI coded with Tkinter (standard GUI library for Python). For possible (de)activations of features, please refer to Fig. 1 in the paper.
 
-Like in the paper, it is injected with three errors (Section 2). The system has no knowledge of these errors, but has a perfect test oracle which checks the entire system's correctness at each transition and alerts the user would it encounter any behavioural error. You can visually see such errors, as the Emergency Level is displayed for each configuration and the GUI updates between each configuration).
+Like in the paper, it is injected with three errors (Section 2). The system has no knowledge of these errors, but has a perfect test oracle which checks the entire system's correctness at each transition and alerts the user would it encounter any behavioural error. You can visually see such errors, as the Emergency Level is displayed for each configuration and the GUI updates between each configuration.
 
 ## Requirements
 
