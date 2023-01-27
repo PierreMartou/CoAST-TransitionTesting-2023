@@ -1,4 +1,4 @@
-# CoAST-2023
+# Complement for the workshop CoAST-2023
 ## What is it ?
 This small prototype of a Risk Information System (RIS) is meant to complement the paper "Beyond Combinatorial Interaction Testing: On the need for transition testing in dynamically adaptive context-aware systems", by P. Martou, B. Duhoux, K. Mens and A. Legay,  1th International Workshop on Context aware and Adaptive Software systems Testing (CoAST 2023, ICST proceedings), 2023.
 
