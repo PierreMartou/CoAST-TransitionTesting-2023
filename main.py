@@ -16,8 +16,9 @@ def runTable1():
     iter = 1
     for transitions in testSuite:
         print("================= Test number " + str(iter) + "================================")
-        RISsystem.transition(transitions)
-        print("Current emergency level : " + str(RISsystem.emergencyLevel))
+        valid = RISsystem.transition(transitions)
+        if valid:
+            print("Current emergency level : " + str(RISsystem.emergencyLevel))
         answer = input("Please enter anything to transition to the next test configuration, or \"exit\" to stop the simulation.")
         if answer.lower() == "exit":
             break
@@ -51,10 +52,11 @@ def runTransitionError():
     print("Current emergency level : " + str(RISsystem.emergencyLevel))
 
     print("This ends this short demonstration. Feel free to explore the possible configurations with the free mode.")
+    print("As shown in the paper, you can for example achieve the same final state +Widget, +emergencylevel, +low, +map (Test number 2) by any other transitions, and see that there is no error.")
     input("Enter anything to terminate execution.")
 
 def runFreeMode():
-    print("Entered free mode. Please type \"exit\" to stop the program.")
+    print("Entered free mode.")
     print("The expected transitions between configurations is a list of features that are activated ('+') or deactivated ('-'), separated by commas.")
     print("Example : \"+widget, +emergencylevel, +Map\" (we advise to start with this transition to achieve a valid system state.)")
     print("Note that the (de)activations are automatically ordered and the features' names are not case sensitive. \"Instructions\" can be abbreviated to \"Instr\".")
@@ -63,7 +65,7 @@ def runFreeMode():
     while True:
         print("================= Test number " + str(iter) + "================================")
         answer = input("Please enter transition to be executed, or \"exit\" to terminate execution :")
-        if answer.lower() != "exit":
+        if answer.lower() == "exit":
             return
         RISsystem.transition(answer)
         print("Current emergency level : " + str(RISsystem.emergencyLevel))

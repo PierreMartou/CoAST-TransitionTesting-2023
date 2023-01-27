@@ -63,10 +63,13 @@ class RIS:
         if self.featuresStatus['Widget']:
             self.window.update()
             sleep(0.05)
-
-        print("Transition completed : " + str(transitions))
+        transitionPrintable = ""
+        for t in transitions:
+            transitionPrintable += ", " + str(t)
+        print("Transition completed : " + transitionPrintable[2:])
         self.emergencyLevelValidity()
         self.windowValidity()
+        return True
 
     # This verifies the correctness of the current emergency level.
     # Returns True if everything is valid.
@@ -74,9 +77,9 @@ class RIS:
         if self.featuresStatus['High'] and self.emergencyLevel != 2:
             print("!!! Error detected, expected emergency level is 2 !!!")
             return False
-        if self.featuresStatus['Low'] and self.emergencyLevel != 1:
+        if not self.featuresStatus['High'] and self.featuresStatus['Low'] and self.emergencyLevel != 1:
             print("!!! Error detected, expected emergency level is 1 !!!")
-            return True
+            return False
         if not self.featuresStatus['High'] and not self.featuresStatus['Low'] and self.emergencyLevel != 0:
             print("!!! Error detected, expected emergency level is 0 !!!")
             return False
