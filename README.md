@@ -15,7 +15,6 @@ Note that old Python3 installations might not contain the module _Tkinter_ by de
 sudo apt-get install python3-tk
 ```
 
-And on Windows with
 ## Usage
 
 To start, please clone the repo and run the main file _main.py_ with no argument. Further instructions are provided within the prototype itself.
